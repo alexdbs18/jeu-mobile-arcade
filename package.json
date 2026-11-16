@@ -1,0 +1,10 @@
+{
+  "name": "jeu-mobile-arcade",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check games/attrape-21/app.js && node --check games/attrape-21/game.js && npm test"
+  }
+}
