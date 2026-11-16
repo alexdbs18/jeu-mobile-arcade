@@ -2,6 +2,14 @@
 
 Collection de mini-jeux mobiles à développer à deux. Cette V1 contient un accueil commun et **Attrape 21**, déjà jouable. Le projet utilise HTML, CSS et JavaScript sans installation de dépendances pour jouer.
 
+## Prototype Rivo — interface et direction artistique
+
+Le prototype validé est dans [`rivo/`](rivo/README.md) : accueil « Mes ligues », parcours jouable, classement, invitations fictives, profil, mascotte et palette A bleu/crème/mandarine.
+
+Après avoir lancé le serveur ci-dessous, ouvrir **http://localhost:8000/rivo/**. Le guide dans `rivo/README.md` indique où modifier chaque partie et comment réinitialiser la démo. Tout fonctionne localement, sans dépendance ni clé API. Les vraies ligues partagées et le branchement des mini-jeux du catalogue restent à développer.
+
+![Accueil Rivo validé](rivo/docs/accueil-palette-a.jpg)
+
 ## Lancer le projet
 
 ```sh
@@ -34,3 +42,4 @@ Les décisions de produit et les règles qui affectent tous les jeux vont dans `
 ## Prochaine étape
 
 Tester deux ou trois concepts de jeux, puis ajouter au socle les fonctions réellement utiles : navigation partagée, réglages, profils, défis quotidiens et classement. Les comptes et données partagés demanderont ensuite un service côté serveur ; le record actuel d’Attrape 21 reste local au navigateur.
+
