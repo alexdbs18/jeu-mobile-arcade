@@ -10,7 +10,7 @@ Depuis la racine du dépôt `jeu-mobile-arcade` :
 python -m http.server 8000
 ```
 
-Ouvrir **http://localhost:8000/rivo/**. Sous Windows, remplacer `python` par `py` si nécessaire. Aucune installation de dépendances, aucun compte et aucune clé API ne sont nécessaires.
+Ouvrir **http://localhost:8000/** : l’entrée du projet mène directement à Rivo. L’adresse **http://localhost:8000/rivo/** fonctionne aussi. Le prototype est disponible sur la branche principale `main`. Sous Windows, remplacer `python` par `py` si nécessaire. Aucune installation de dépendances, aucun compte et aucune clé API ne sont nécessaires.
 
 Sur téléphone, utiliser le même Wi-Fi et ouvrir `http://ADRESSE_IP_DU_PC:8000/rivo/`. La copie des liens peut dépendre des permissions du navigateur ; un champ permet aussi de sélectionner la valeur.
 
@@ -29,7 +29,7 @@ Suivre le guide `CONTRIBUTING.md` à la racine du dépôt. Chacun crée sa branc
 - `couleurs.html` : comparaison des anciennes pistes de couleurs.
 - `docs/accueil-palette-a.jpg` : référence visuelle validée.
 
-Le prototype reste autonome ; les mini-jeux de `games/` et le catalogue existant restent disponibles. Le raccordement des vrais mini-jeux au parcours Rivo reste à faire selon `docs/game-contract.md` à la racine du dépôt. Les énigmes de démonstration servent à essayer le parcours.
+Le prototype reste autonome. Le dossier `games/_template/` sert de point de départ aux futurs mini-jeux ; leur raccordement au parcours Rivo reste à faire selon `docs/game-contract.md` à la racine du dépôt. Les énigmes de démonstration servent à essayer le parcours.
 
 La copie livrée correspond à la version du 16 novembre 2026 : palette A validée, accueil simplifié et bleu fondu dans le crème. Source du prototype : commit `c2f813106b1f1ece477784d6259414d688676dc1`.
 
