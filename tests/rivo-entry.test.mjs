@@ -11,13 +11,14 @@ test('ouvrir le dépôt mène à l’interface Rivo', async () => {
   const entry = new URL(target, root);
   assert.equal(entry.href, new URL('rivo/', root).href);
   const app = await readFile(new URL('index.html', entry), 'utf8');
-  assert.match(app, /<title>Rivo · Mes ligues<\/title>/);
-  assert.match(app, /id="app"/);
-  assert.match(app, /src="app\.js/);
+  assert.match(app, /<title>Rivo · Atelier de jeu<\/title>/);
+  assert.match(app, /id="stage"/);
+  assert.match(app, /rebond-playfield/);
+  assert.doesNotMatch(app, /INLINE_(?:STYLE|SCRIPTS)|POSE_(?:FOCUS|WIN|LOSE)|TOY_(?:WAGON|PHOTO|TRACE|MIROIR)/);
 });
 
 test('les pages et feuilles de style embarquent toutes leurs ressources locales', async () => {
-  const pending = ['rivo/index.html', 'rivo/couleurs.html'];
+  const pending = ['rivo/index.html', 'rivo/arcade-electrique.html', 'rivo/couleurs.html'];
   const seen = new Set();
   while (pending.length) {
     const path = pending.pop();
@@ -25,9 +26,11 @@ test('les pages et feuilles de style embarquent toutes leurs ressources locales'
     seen.add(path);
     const file = new URL(path, root);
     const source = await readFile(file, 'utf8');
+    // An inline script may contain HTML templates whose URLs are resolved at runtime.
+    const markup = source.replace(/(<script\b[^>]*>)[\s\S]*?<\/script\s*>/gi, '$1</script>');
     const refs = path.endsWith('.css')
       ? [...source.matchAll(/url\(\s*["']?([^\s)"']+)["']?\s*\)/g)].map(m => m[1])
-      : [...source.matchAll(/(?:src|href)=["']([^"']+)["']/g)].map(m => m[1]);
+      : [...markup.matchAll(/(?:src|href)=["']([^"']+)["']/g)].map(m => m[1]);
     for (const ref of refs) {
       if (/^(?:[a-z]+:|\/\/|#)/i.test(ref)) continue;
       const resolved = new URL(ref, file);
@@ -38,7 +41,10 @@ test('les pages et feuilles de style embarquent toutes leurs ressources locales'
       if (/\.(html|css)$/.test(resolved.pathname)) pending.push(resolved.href.slice(root.href.length));
     }
   }
-  // Ces trois images sont choisies dynamiquement selon le résultat du joueur.
+  for (const image of ['focus', 'win', 'lose', 'wagon', 'photo', 'trace', 'miroir']) {
+    assert.equal((await stat(new URL(`rivo/src/assets/${image}.webp`, root))).isFile(), true);
+  }
+  // L’ancienne maquette utilise encore ses réactions de grenouille externes.
   for (const mood of ['focus', 'win', 'lose']) {
     assert.equal((await stat(new URL(`rivo/assets/frog-${mood}.webp`, root))).isFile(), true);
   }
