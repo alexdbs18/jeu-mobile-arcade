@@ -5,6 +5,6 @@
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "check": "node --check rivo/app.js && node --check rivo/palette.js && node --check rivo/couleurs.js && npm test"
+    "check": "node --check rivo/app.js && node --check rivo/palette.js && node --check rivo/couleurs.js && node --check rivo/src/app.js && node --check rivo/src/brand-art.js && node --check rivo/src/illustrations.js && node --check rivo/src/model.js && node --check rivo/src/rebond.js && node --check rivo/src/screens.js && npm test"
   }
 }

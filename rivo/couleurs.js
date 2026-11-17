@@ -6,7 +6,7 @@ const palettes = [
 ];
 let currentView='home';
 let currentPalette=palettes.some(p=>p.id===location.hash.slice(1))?location.hash.slice(1):'azur';
-function prototypeURL(id,embedded=false){return `./?palette=${id}&view=${currentView}${embedded?'&embed=1':''}`;}
+function prototypeURL(id,embedded=false){return `./arcade-electrique.html?palette=${id}&view=${currentView}${embedded?'&embed=1':''}`;}
 document.querySelector('#comparison').innerHTML=palettes.map(p=>`<section class="palette-card ${p.id===currentPalette?'is-current':''}" data-card="${p.id}" aria-labelledby="title-${p.id}" style="--label-bg:${p.labelBg};--label-ink:${p.labelInk}"><div class="palette-label"><span class="letter">${p.letter}</span><div><h2 id="title-${p.id}">${p.title}</h2><p class="palette-subtitle">${p.subtitle}</p></div>${p.recommended?'<span class="suggestion">VALIDÉE</span>':''}</div><div class="frame-shell"><iframe title="Prototype ${p.letter} · ${p.title}" src="${prototypeURL(p.id,true)}"></iframe></div><div class="swatches" aria-label="Couleurs et usages">${p.colors.map(([role,color])=>`<div class="swatch" style="--color:${color}"><i aria-hidden="true"></i><b>${role}</b><small>${color}</small></div>`).join('')}</div><p class="palette-note">${p.note}</p><a class="try-palette" href="${prototypeURL(p.id)}" target="_blank" rel="noopener">Tester cette palette en plein écran</a></section>`).join('');
 function sizeFrames(){document.querySelectorAll('.frame-shell').forEach(shell=>{if(!shell.clientWidth)return;const scale=shell.clientWidth/390;shell.style.height=`${844*scale}px`;shell.querySelector('iframe').style.transform=`scale(${scale})`;});}
 const observer=new ResizeObserver(sizeFrames);document.querySelectorAll('.frame-shell').forEach(el=>observer.observe(el));
