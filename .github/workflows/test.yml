@@ -11,5 +11,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm test
-      - run: node --check games/attrape-21/app.js
+      - run: npm run check
