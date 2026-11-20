@@ -9,6 +9,19 @@
   const situations = {ready:'Défi disponible',rival:'Un pote me dépasse',done:'Journée terminée'};
   const perceptions = {normal:'Vision non simulée',protan:'Protanopie',deutan:'Deutéranopie',tritan:'Tritanopie'};
   const games = {aiguillage:'Aiguillage',table:'Plan de table',photo:'Photo Flash',trace:'Trace Fantôme',double:'Double Fond',miroir:'Miroir'};
+  const characters = {
+    grenouille:{name:'Grenouille',asset:'CHARACTER_FROG'}, axolotl:{name:'Axolotl',asset:'CHARACTER_AXOLOTL'},
+    renard:{name:'Renard',asset:'CHARACTER_FOX'}, pingouin:{name:'Pingouin',asset:'CHARACTER_PENGUIN'},
+    lapin:{name:'Lapin',asset:'CHARACTER_RABBIT'}, chat:{name:'Chat',asset:'CHARACTER_CAT'},
+    pieuvre:{name:'Pieuvre',asset:'CHARACTER_OCTOPUS'}, herisson:{name:'Hérisson',asset:'CHARACTER_HEDGEHOG'},
+    abeille:{name:'Abeille',asset:'CHARACTER_BEE'}, dragon:{name:'Dragon',asset:'CHARACTER_DRAGON'}
+  };
+  const characterImage=(id,cls='')=>'<img class="character '+cls+'" src="'+(characters[id]?.asset||characters.grenouille.asset)+'" alt="" draggable="false" loading="lazy">';
+  const countryCodes='AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW'.split(' ');
+  const currentLocale=()=>RivoI18n.locale(state?.language||'fr');
+  const countryName=code=>new Intl.DisplayNames([currentLocale()],{type:'region'}).of(code)||code;
+  const countryFlag=code=>String(code||'FR').toUpperCase().replace(/[A-Z]/g,c=>String.fromCodePoint(c.charCodeAt(0)+127397));
+  const countryOptions=selected=>countryCodes.map(code=>({code,name:countryName(code),flag:countryFlag(code)})).sort((a,b)=>a.name.localeCompare(b.name,currentLocale())).map(({code,name,flag})=>'<option value="'+code+'" '+(selected===code?'selected':'')+'>'+flag+' '+name+'</option>').join('');
   const paths = {
     play:'<path d="M6 4.9a1.5 1.5 0 0 1 2.3-1.3l12 7.1a1.5 1.5 0 0 1 0 2.6l-12 7.1A1.5 1.5 0 0 1 6 19.1z"/>',
     rank:'<path d="M2 12h5.5v9H2zM9 4h6v17H9zM16.5 9H22v12h-5.5z"/>',
@@ -37,7 +50,7 @@
   const custom=Array.isArray(saved.custom)?saved.custom.filter(item=>item&&typeof item.name==='string'&&typeof item.id==='string'&&typeof item.code==='string').map(l=>({...l,icon:'flag',opps:[],count:1})):[];
   const leagues=[...baseLeagues,...custom];
   const seedRun=(hits,ms)=>({hits,ms,log:[]});
-  const clock=ms=>new Intl.NumberFormat('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1}).format(ms/1000)+' s';
+  const clock=ms=>new Intl.NumberFormat(currentLocale(),{minimumFractionDigits:1,maximumFractionDigits:1}).format(ms/1000)+' s';
   const gapLabel=ms=>ms>0 && ms<100?Math.round(ms)+' ms':clock(ms);
   const sortScores=(a,b)=>b.hits-a.hits||a.ms-b.ms;
   const best=rows=>rows.filter(Boolean).slice().sort(sortScores)[0];
@@ -52,10 +65,11 @@
   const q=new URLSearchParams(location.search);
   const theme=Object.hasOwn(directions,q.get('da'))?q.get('da'):'a';
   const sc=Object.hasOwn(situations,q.get('situation'))?q.get('situation'):'ready';
-  const state={theme,scenario:sc,league:sc==='rival'?'promo':'brains',runs:caseRuns(sc),view:'home',mode:'try',level:1,recordGame:'all',worldGame:'aiguillage',history:[],game:null,result:null,record:false,practice:false,globalBest:null,lastFeedback:'',fail:false,busy:false,perception:'normal',capture:q.has('cadre'),compareView:'home',revision:0};
-  const currentLeague=()=>leagues.find(l=>l.id===state.league)||leagues[0];
-  const left=(l=currentLeague())=>Math.max(0,2-(state.runs[l.id]||[]).length);
-  const leagueScores=(l, own=best(state.runs[l.id]||[]))=>{
+  const state={theme,scenario:sc,league:sc==='rival'?'promo':'brains',runs:caseRuns(sc),view:'home',mode:'try',level:1,recordGame:'all',worldGame:'aiguillage',history:[],game:null,result:null,record:false,practice:false,globalBest:null,lastFeedback:'',fail:false,busy:false,perception:'normal',capture:q.has('cadre'),compareView:'home',revision:0,profile:null,selectedCharacter:'grenouille',backendMode:false,seasonByLeague:{},currentDay:null,dailyBoard:[],seasonBoard:[],activeVote:null,gameCatalog:[],publicRanks:{},seasonRecap:null,recapSlide:0,currentAttempt:null,streak:0,day4Reward:false,backendError:'',language:RivoI18n.supported.includes(saved.language)?saved.language:RivoI18n.detect()};
+  const currentLeague=()=>leagues.find(l=>l.id===state.league)||leagues[0]||null;
+  const left=(l=currentLeague())=>l?Math.max(0,2-(state.runs[l.id]||[]).filter(Boolean).length):0;
+  const leagueScores=(l, own=l?best(state.runs[l.id]||[]):null)=>{
+    if(!l)return [];
     const scores=l.opps.map(([name,hits,ms])=>({name,hits,ms}));
     if(own)scores.push({...own,name:'Toi',you:true});
     scores.sort(sortScores);
@@ -66,5 +80,6 @@
   const poseData={focus:'POSE_FOCUS',lose:'POSE_LOSE',win:'POSE_WIN'};
   const frog=(mood,cls='')=>'<img class="frog '+cls+'" src="'+poseData[mood]+'" alt="" draggable="false" width="144" height="142">';
   const stickers={win:'Bien joué !',lose:'Ça pique.',focus:'Revanche ?'};
-  window.R={directions,names,situations,perceptions,games,gamesData,icon,esc,saved,save,options,leagues,caseRuns,seedRun,state,currentLeague,left,leagueScores,best,sortScores,clock,gapLabel,shapeNames,frog,stickers,q};
+  const setLeagues=rows=>{leagues.splice(0,leagues.length,...rows);if(!leagues.some(l=>l.id===state.league))state.league=leagues[0]?.id||'';state.runs=Object.fromEntries(leagues.map(l=>[l.id,[]]));};
+  window.R={directions,names,situations,perceptions,games,gamesData,characters,characterImage,countryCodes,countryName,countryFlag,countryOptions,icon,esc,saved,save,options,leagues,caseRuns,seedRun,state,currentLeague,left,leagueScores,best,sortScores,clock,gapLabel,shapeNames,frog,stickers,q,setLeagues};
 })();

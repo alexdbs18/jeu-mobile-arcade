@@ -1,0 +1,29 @@
+project_id = "rivo"
+
+[api]
+enabled = true
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+major_version = 15
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:8002"
+additional_redirect_urls = ["http://localhost:8001", "http://127.0.0.1:8001", "http://localhost:8002", "http://127.0.0.1:8002"]
+enable_signup = true
+enable_anonymous_sign_ins = true
+
+[functions.submit-aiguillage]
+verify_jwt = true
+
+[functions.resolve-vote]
+verify_jwt = true
+
+[functions.maintenance]
+verify_jwt = true
+
+[functions.scheduled-maintenance]
+verify_jwt = false

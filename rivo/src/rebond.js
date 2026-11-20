@@ -46,7 +46,8 @@
         </button>
       </section>`;
 
-    return selector + `
+    const demoNotice = state.backendMode ? '' : '<p class="demo-data-note">Aperçu local · joueurs, ligues et scores de démonstration uniquement.</p>';
+    return demoNotice + selector + `
       <article class="rebond-challenge ${complete ? 'is-complete' : ''}">
         <span class="challenge-caption">${icon(complete ? 'check' : 'flag')}${complete ? 'Défi terminé' : 'Défi du jour'}</span>
         <div class="challenge-display">
@@ -76,7 +77,7 @@
           <span class="member-count" aria-label="${league.count} membres">${icon('people')}${league.count}</span>
         </div>
         <div class="community-links">
-          ${socialLink('league', 'rank', 'Résultats des amis')}
+          ${socialLink('league', 'rank', 'Classement')}
           ${socialLink('chat', 'chat', 'Chat de ligue')}
         </div>
       </section>`;
